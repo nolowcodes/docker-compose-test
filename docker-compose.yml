@@ -14,9 +14,12 @@ services:
     ports:
       - "8082:3000"
     networks:
-      - webnet
+      - dokploy_net
+      - dokploy_dokploy_net
     # ห้ามมี traefik labels ในไฟล์นี้ (เอาออกให้หมด)
 
 networks:
-  webnet:
-    driver: overlay
+  dokploy_net:
+    driver: bridge
+  dokploy_dokploy_net:
+      external: true
