@@ -1,5 +1,5 @@
-version: "3"
- 
+version: "3.9"
+
 services:
   next-app:
     build:
@@ -8,17 +8,17 @@ services:
       args:
         ENV_VARIABLE: ${ENV_VARIABLE}
         NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
-    restart: always
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    # เปิดพอร์ตบนโฮสต์ไว้รับจาก Cloudflared โดยตรง (ไม่ผ่าน Traefik)
     ports:
-      - 3000
+      - "8082:3000"
     networks:
-      - dokploy-net
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.<unique-name>.rule=Host(`demo.nolowcodes.com`)"
-      - "traefik.http.routers.<unique-name>.entrypoints=websecure"
-      - "traefik.http.routers.<unique-name>.tls.certResolver=letsencrypt"
-      - "traefik.http.services.<unique-name>.loadbalancer.server.port=3000"
+      - webnet
+    # ห้ามมี traefik labels ในไฟล์นี้ (เอาออกให้หมด)
+
 networks:
-  dokploy-net:
-    external: true
+  webnet:
+    driver: overlay
